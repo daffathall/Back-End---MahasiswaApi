@@ -1,0 +1,6 @@
+@Mahas.Api_HostAddress = http://localhost:5051
+
+GET {{Mahas.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

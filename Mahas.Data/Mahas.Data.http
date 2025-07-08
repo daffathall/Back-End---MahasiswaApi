@@ -1,0 +1,6 @@
+@Mahas.Data_HostAddress = http://localhost:5223
+
+GET {{Mahas.Data_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

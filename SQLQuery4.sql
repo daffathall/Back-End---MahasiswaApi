@@ -1,0 +1,7 @@
+SELECT TOP (1000) [Id]
+      ,[Nim]
+      ,[Nama]
+      ,[Jurusan]
+      ,[IPK]
+      ,[IsDeleted]
+  FROM [MahasiswaDb].[dbo].[Mahasiswas]
