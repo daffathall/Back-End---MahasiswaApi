@@ -59,6 +59,20 @@ namespace Mahas.Api.Controller
             }
         }
 
+        [HttpGet("/nim/{nim:int}")]
+        public async Task<IActionResult> GetViaNim([FromRoute] int nim)
+        {
+            try
+            {
+                var res = await _mahasiswaService.GetViaNim(nim);
+                return Ok(res);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -81,9 +95,23 @@ namespace Mahas.Api.Controller
                 await _mahasiswaService.Update(id, mahasiswaDTO);
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("/nim/{nim:int}")]
+        public async Task<IActionResult> UpdateViaNim([FromRoute] int nim, [FromBody] MahasiswaCreateRequestDomainModel mahasiswaDTO)
+        {
+            try
+            {
+                await _mahasiswaService.UpdateViaNim(nim, mahasiswaDTO);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

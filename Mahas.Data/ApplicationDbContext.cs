@@ -13,5 +13,6 @@ namespace Mahas.Data
         public DbSet<JurusanDao> Jurusans { get; set; }
         public DbSet<MataKuliahDao> MataKuliahs { get; set; }
         public DbSet<NilaiDao> Nilais { get; set; }
+        public DbSet<FileDao> Files { get; set; }
     }
 }

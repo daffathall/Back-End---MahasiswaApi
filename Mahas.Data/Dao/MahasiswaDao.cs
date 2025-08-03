@@ -1,4 +1,5 @@
-﻿namespace Mahas.Data.Dao
+﻿
+namespace Mahas.Data.Dao
 {
     public class MahasiswaDao
     {

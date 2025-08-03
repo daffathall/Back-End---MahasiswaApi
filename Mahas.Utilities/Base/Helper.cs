@@ -9,6 +9,8 @@ namespace Mahas.Utilities.Base
 {
     public static class Helper
     {
+
+        public const string BASE_PATH_FILE_APP = "upload/";
         public static string FromAngka(decimal angka)
         {
             if (angka >= 75 && angka <= 100)
@@ -26,5 +28,18 @@ namespace Mahas.Utilities.Base
             else
                 return nameof(EnumGrade.E);
         }
+
+        public static string SafePath(this string path)
+        {
+            path = path.EndsWith(@"/") ? path : path + @"/";
+            path = path.StartsWith(@"/") ? path.Remove(0,1) : path;
+            return path;
+        }
+
+        public static string BASE_PATH_DIRECTORY() => Path.Combine(Directory.GetCurrentDirectory().Split(@"\")[0], "Sharing") + "\\";
+        public static string CreateBaseUploadPath(string path)=> Path.Combine(BASE_PATH_FILE_APP, path, DateTime.UtcNow.ToString("yyMMdd/"));
+        public static string CreateFullUploadPath(string path)=> Path.Combine(BASE_PATH_DIRECTORY(), CreateBaseUploadPath(path));
+    
+    
     }
 }

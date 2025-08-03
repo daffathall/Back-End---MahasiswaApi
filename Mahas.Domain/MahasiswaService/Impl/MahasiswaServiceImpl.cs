@@ -19,14 +19,16 @@ namespace Mahas.Domain.MahasiswaService.Impl
             _db = db;
         }
 
-        public async Task<MahasiswaDao> Create(MahasiswaCreateRequestDomainModel mahasiswaDTO)
+        public async Task<MahasiswaResponse> Create(MahasiswaCreateRequestDomainModel mahasiswaDTO)
         {
             if(mahasiswaDTO == null)
             {
                 throw new Exception("Isinya yang bener");
             }
 
-            if(!(await _db.Jurusans.AnyAsync(b => b.Id == mahasiswaDTO.JurusanID)))
+            var jur = await _db.Jurusans.FirstOrDefaultAsync(b => b.Id == mahasiswaDTO.JurusanID);
+
+            if (jur == null)
             {
                 throw new Exception($"Jurusan tidak ditemukan dengan id {mahasiswaDTO.JurusanID}");
             }
@@ -40,7 +42,12 @@ namespace Mahas.Domain.MahasiswaService.Impl
             
             await _db.Mahasiswas.AddAsync(res);
             await _db.SaveChangesAsync();
-            return res;
+            return new MahasiswaResponse
+            {
+                Nim = mahasiswaDTO.Nim,
+                Nama = mahasiswaDTO.Nama,
+                Jurusan = jur.Nama
+            };
         }
 
         public async Task Delete(int id)
@@ -55,14 +62,20 @@ namespace Mahas.Domain.MahasiswaService.Impl
             await _db.SaveChangesAsync();
         }
 
-        public async Task<MahasiswaDao?> Get(int id)
+        public async Task<MahasiswaResponse?> Get(int id)
         {
-            return await _db.Mahasiswas.Include(b=>b.Jurusan).FirstOrDefaultAsync(b => b.Id == id && b.IsDeleted != true);            
+            return await _db.Mahasiswas.Include(b=>b.Jurusan).Where(b => b.Id == id && b.IsDeleted != true).Select(b=>new MahasiswaResponse {Jurusan = b.Jurusan.Nama, Nama = b.Nama, Nim = b.Nim}).FirstOrDefaultAsync();            
         }
 
-        public async Task<List<MahasiswaDao>> GetAll()
+        public async Task<MahasiswaResponse?> GetViaNim(int nim)
         {
-            return await _db.Mahasiswas.Include(b=>b.Jurusan).Where(b=>b.IsDeleted !=true).ToListAsync();
+            return await _db.Mahasiswas.Include(b=>b.Jurusan).Where(b => b.Nim == nim && b.IsDeleted != true).Select(b => new MahasiswaResponse { Jurusan = b.Jurusan.Nama, Nama = b.Nama, Nim = b.Nim }).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<MahasiswaResponse>> GetAll()
+        {
+             return await _db.Mahasiswas.Include(b=>b.Jurusan).Where(b => b.IsDeleted != true).Select(b=>new MahasiswaResponse {Jurusan = b.Jurusan.Nama, Nama = b.Nama, Nim = b.Nim}).ToListAsync();            
+        
         }
 
         public async Task<MahasiswaDao> Update(int id, MahasiswaCreateRequestDomainModel mahasiswaDTO)
@@ -76,6 +89,26 @@ namespace Mahas.Domain.MahasiswaService.Impl
             if (res == null)
             {
                 throw new Exception("Gaada Id itu");
+            }
+            res.Nim = mahasiswaDTO.Nim;
+            res.Nama = mahasiswaDTO.Nama;
+            res.JurusanId = mahasiswaDTO.JurusanID;
+            _db.Mahasiswas.Update(res);
+            await _db.SaveChangesAsync();
+            return res;
+        }
+
+        public async Task<MahasiswaDao> UpdateViaNim(int nim, MahasiswaCreateRequestDomainModel mahasiswaDTO)
+        {
+            if (!(await _db.Jurusans.AnyAsync(b => b.Id == mahasiswaDTO.JurusanID)))
+            {
+                throw new Exception($"Jurusan tidak ditemukan dengan id {mahasiswaDTO.JurusanID}");
+            }
+
+            var res = await _db.Mahasiswas.FirstOrDefaultAsync(b => b.Nim == nim);
+            if (res == null)
+            {
+                throw new Exception("Gaada mahasiswa dengan NIM itu");
             }
             res.Nim = mahasiswaDTO.Nim;
             res.Nama = mahasiswaDTO.Nama;

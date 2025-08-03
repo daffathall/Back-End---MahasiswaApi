@@ -10,10 +10,12 @@ namespace Mahas.Domain.MahasiswaService
 {
     public interface IMahasiswaService
     {
-        public Task<MahasiswaDao?> Get(int id);
-        public Task<List<MahasiswaDao>> GetAll();
-        public Task<MahasiswaDao> Create(MahasiswaCreateRequestDomainModel mahasiswaDTO);
+        public Task<MahasiswaResponse?> Get(int id);
+        public Task<MahasiswaResponse?> GetViaNim(int nim);
+        public Task<List<MahasiswaResponse>> GetAll();
+        public Task<MahasiswaResponse> Create(MahasiswaCreateRequestDomainModel mahasiswaDTO);
         public Task<MahasiswaDao> Update(int id, MahasiswaCreateRequestDomainModel mahasiswaDTO);
+        public Task<MahasiswaDao> UpdateViaNim(int nim, MahasiswaCreateRequestDomainModel mahasiswaDTO);
         public Task Delete(int id);
         public Task SetJurusan(int mahaid, MahasiswaCreateRequestDomainModel mahasiswaDTO);
     }
